@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackhole // Ultraviolet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --accent: #ff4400;
+            --bg: #050505;
+            --nav-bg: #0a0a0a;
+            --text: #ffffff;
+            --input-bg: #111;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            background: var(--bg);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        /* Navigation Bar */
+        .nav-bar {
+            background: var(--nav-bg);
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            gap: 15px;
+            border-bottom: 2px solid var(--accent);
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            min-width: fit-content;
+        }
+
+        .logo-circle {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            background: radial-gradient(circle, #222 0%, #000 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .logo-text {
+            font-weight: 900;
+            letter-spacing: 3px;
+            font-size: 1.1rem;
+            color: var(--accent);
+        }
+
+        /* Search/URL Container */
+        .address-bar-container {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            background: var(--input-bg);
+            border-radius: 30px;
+            padding: 5px 20px;
+            border: 1px solid #333;
+            transition: 0.3s;
+        }
+
+        .address-bar-container:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 8px rgba(255, 68, 0, 0.3);
+        }
+
+        #url-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #ff9900;
+            padding: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        /* Buttons */
+        .btn {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            background: #ff6622;
+        }
+
+        .settings-btn {
+            background: #1a1a1a;
+            color: var(--accent);
+            border: 1px solid #333;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* Frame Area */
+        .viewport {
+            width: 100%;
+            height: calc(100vh - 65px);
+            border: none;
+            background: #fff;
+        }
+
+        /* Settings Panel */
+        #settings-panel {
+            position: fixed;
+            top: 75px;
+            right: 20px;
+            width: 300px;
+            background: var(--nav-bg);
+            border: 1px solid var(--accent);
+            border-radius: 15px;
+            padding: 20px;
+            display: none;
+            z-index: 2000;
+        }
+
+        .setting-item {
+            margin-bottom: 15px;
+        }
+
+        .setting-item label {
+            display: block;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .setting-input {
+            width: 100%;
+            background: #000;
+            border: 1px solid #333;
+            color: var(--accent);
+            padding: 8px;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav-bar">
+        <div class="logo-section" onclick="location.reload()">
+            <div class="logo-circle"><i class="fas fa-bullseye" style="color: var(--accent); font-size: 12px;"></i></div>
+            <div class="logo-text">BLACKHOLE</div>
+        </div>
+
+        <form id="proxy-form" class="address-bar-container">
+            <i class="fas fa-globe" style="color: #555; margin-right: 10px;"></i>
+            <input type="text" id="url-input" placeholder="Search the void or enter a URL..." autocomplete="off">
+        </form>
+
+        <button class="btn" onclick="processUrl()">LAUNCH</button>
+        <div class="settings-btn" onclick="toggleSettings()"><i class="fas fa-cog"></i></div>
+    </nav>
+
+    <div id="settings-panel">
+        <h3 style="margin-top:0; color:var(--accent)">CORE CONFIG</h3>
+        <div class="setting-item">
+            <label>SEARCH ENGINE</label>
+            <select class="setting-input" id="search-engine">
+                <option value="https://www.google.com/search?q=">Google</option>
+                <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
+                <option value="https://www.bing.com/search?q=">Bing</option>
+            </select>
+        </div>
+        <div class="setting-item">
+            <label>EMERGENCY KEY (Closes tab)</label>
+            <input type="text" class="setting-input" placeholder="e.g. Escape" id="panic-key">
+        </div>
+        <button class="btn" style="width: 100%;" onclick="toggleSettings()">CLOSE</button>
+    </div>
+
+    <iframe id="content-frame" class="viewport" src="about:blank"></iframe>
+
+    <script src="uv/uv.bundle.js"></script>
+    <script src="uv/uv.config.js"></script>
+    <script>
+        const form = document.getElementById('proxy-form');
+        const input = document.getElementById('url-input');
+        const frame = document.getElementById('content-frame');
+
+        // Logic to process the URL or search query
+        function processUrl() {
+            const url = input.value.trim();
+            const searchEngine = document.getElementById('search-engine').value;
+            
+            if (!url) return;
+
+            let targetUrl = "";
+            if (url.includes('.') && !url.includes(' ')) {
+                targetUrl = url.startsWith('http') ? url : 'https://' + url;
+            } else {
+                targetUrl = searchEngine + encodeURIComponent(url);
+            }
+
+            // Standard Ultraviolet registration and launch
+            window.navigator.serviceWorker.register('./sw.js', {
+                scope: __uv$config.prefix
+            }).then(() => {
+                frame.src = __uv$config.prefix + __uv$config.encodeUrl(targetUrl);
+            });
+        }
+
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            processUrl();
+        };
+
+        function toggleSettings() {
+            const panel = document.getElementById('settings-panel');
+            panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+        }
+
+        // Panic Key Logic
+        window.addEventListener('keydown', (e) => {
+            const panicKey = document.getElementById('panic-key').value;
+            if (e.key === panicKey) {
+                window.location.href = 'https://classroom.google.com';
+            }
+        });
+    </script>
+</body>
+</html>
